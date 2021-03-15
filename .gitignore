@@ -1,3 +1,5 @@
 .env
 
 *.sql
+
+my_settings.js
