@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model todo_items {
+  id         Int        @id @default(autoincrement())
+  list_id    Int
+  body       String     @db.VarChar(100)
+  start_date DateTime   @db.DateTime(0)
+  end_date   DateTime   @db.DateTime(0)
+  created_at DateTime?  @default(now()) @db.DateTime(0)
+  updated_at DateTime?  @default(now()) @db.DateTime(0)
+  todo_lists todo_lists @relation(fields: [list_id], references: [id])
+
+  @@index([list_id], name: "FK_todo_items_list_id_todo_lists_id")
+}
+
+model todo_lists {
+  id         Int          @id @default(autoincrement())
+  user_id    Int
+  name       String       @db.VarChar(15)
+  created_at DateTime?    @default(now()) @db.DateTime(0)
+  updated_at DateTime?    @default(now()) @db.DateTime(0)
+  users      users        @relation(fields: [user_id], references: [id])
+  todo_items todo_items[]
+
+  @@index([user_id], name: "FK_todo_lists_user_id_users_id")
+}
+
+model users {
+  id         Int          @id @default(autoincrement())
+  email      String       @db.VarChar(30)
+  password   String       @db.VarChar(50)
+  username   String       @db.VarChar(8)
+  todo_lists todo_lists[]
+}
